@@ -4,10 +4,9 @@ use Kwiki;
 use IO::All;
 use Cwd;
 
-field directory => 'kwiki';
-field 'base_dir';
+const 'base_dir' => Cwd::abs_path(".") . "/kwiki";
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub init {
     my $plugins = shift;
@@ -32,9 +31,7 @@ sub hub {
 }
 
 sub make_directory {
-    mkdir($self->directory) || warn "unable to mkdir ", $self->directory, "\n";
-    $self->base_dir(Cwd::abs_path('.') . '/' . $self->directory)
-        unless $self->base_dir;
+    mkdir($self->base_dir) || warn "unable to mkdir ", $self->base_dir, "\n";
 }
 
 sub install_new_kwiki {
