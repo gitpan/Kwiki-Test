@@ -17,3 +17,4 @@ t/makes-system.t
 t/pages.t
 t/simple_hook.t
 t/simple_widget.t
+Changes

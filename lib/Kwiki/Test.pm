@@ -6,14 +6,24 @@ use Cwd;
 
 const 'base_dir' => Cwd::abs_path(".") . "/kwiki";
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub init {
     my $plugins = shift;
     $self->make_directory;
     $self->install_new_kwiki;
-    $self->add_plugins($plugins);
+    if ($plugins) {
+        $self->add_plugins($plugins);
+    }
     return $self;
+}
+
+sub initialize_plugins {
+    my @plugins = @{$self->hub->registry->lookup->{plugins}};
+    foreach my $plugin (@plugins) {
+        my $class = $plugin->{id};
+        $self->hub->$class->init;
+    }
 }
 
 sub reset_hub {
@@ -43,9 +53,9 @@ sub install_new_kwiki {
 
 sub add_plugins {
     my $plugins = shift;
-    for my $plugin (@$plugins) {
-        $self->hub->command->process('-quiet', '-add', "$plugin");
-    }
+    $self->hub->command->quiet(1);
+    $self->hub->command->handle_add(@$plugins);
+    $self->initialize_plugins;
 }
 
 sub cleanup {
